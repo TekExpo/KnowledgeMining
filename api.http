@@ -1,0 +1,142 @@
+#Cognitive Search
+
+#Curl Template
+curl https://REPLACE-WITH-YOUR-RESOURCE-NAME.cognitiveservices.azure.com/qnamaker/v4.0/knowledgebases/create \
+-X POST \
+-H "Ocp-Apim-Subscription-Key: REPLACE-WITH-YOUR-RESOURCE-KEY" \
+-H "Content-Type:application/json" \
+-H "Content-Size:107" \
+-d '{ name: "QnA Maker FAQ",urls: [ "https://docs.microsoft.com/en-in/azure/cognitive-services/qnamaker/faqs"]}'
+
+
+
+###
+#Q&A
+
+POST  https://kmqna-a003.azurewebsites.net/qnamaker/knowledgebases/a3303f56-2e3d-47c3-a2a3-4cc2cc9cd4d7/generateAnswer
+Authorization: EndpointKey 3a4c3a77-2e8d-43ca-ad38-39051ed73cbb
+Content-Type: application/json
+
+{"question":"Booking Flights"}
+
+###
+curl -X POST https://kmqna-a003.azurewebsites.net/qnamaker/knowledgebases/a3303f56-2e3d-47c3-a2a3-4cc2cc9cd4d7/generateAnswer -H "Authorization: EndpointKey 3a4c3a77-2e8d-43ca-ad38-39051ed73cbb" -H "Content-type: application/json" -d "{'question':'Booking Flights'}"
+
+
+###
+#Field mapping
+
+PUT https://docmentcogsearch.search.windows.net/indexers/indexer1635876666610?api-version=2020-06-30
+Content-Type: application/json
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+
+{
+    "dataSourceName" : "documents-ds",
+    "targetIndexName" : "document-search",
+    "fieldMappings" : [ 
+        { "sourceFieldName" : "metadata_storage_name", "targetFieldName" : "file_name" },
+        { "sourceFieldName" : "metadata_storage_path", "targetFieldName" : "url" }
+    ]
+}
+
+
+###
+
+GET https://docmentcogsearch.search.windows.net/indexes?api-version=2020-06-30&$select=name
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+
+###
+#Search Template
+https://<YOUR-SEARCH-SERVICE>.search.windows.net/indexes/hotels-quickstart/docs?search=restaurant wifi&$count=true&$select=HotelName,Description,Tags&api-version=2020-06-30
+
+###
+# Search New York 
+# Expected Return count = 18
+# Actual Return count = 19
+
+GET https://docmentcogsearch.search.windows.net/indexes/document-index/docs?search=New +York&api-version=2020-06-30&$count=true
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+
+
+###
+# Search New York 
+# Expected Return count = 18
+# Actual Return count = 18
+
+POST https://docmentcogsearch.search.windows.net/indexes/document-index/docs/search?api-version=2020-06-30
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+{
+    "search": "New York",
+    "queryType": "simple",
+    "searchMode": "all",
+    "searchFields": "content",
+    "count": "true"
+}
+
+
+###
+# Search London & Buckingham Palace 
+# Expected Return count = 2
+# Actual Return count = 2
+
+POST https://docmentcogsearch.search.windows.net/indexes/document-index/docs/search?api-version=2020-06-30
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+{
+    "search": "London, Buckingham Palace",
+    "queryType": "simple",
+    "searchMode": "all",
+    "searchFields": "content",
+    "count": "true"
+}
+
+###
+# Search Las Vegas has reviews 
+# Expected Return count = 13
+# Actual Return count = 13
+
+POST https://docmentcogsearch.search.windows.net/indexes/document-index/docs/search?api-version=2020-06-30
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+{
+    "search": "Las Vegas",
+    "queryType": "simple",
+    "searchMode": "all",
+    "searchFields": "content",
+    "filter": "search.ismatchscoring('reviews', 'url')",
+    "count": "true"
+}
+
+###
+# Search Las Vegas has reviews 
+# Expected Return count = 13
+# Actual Return count = 13
+
+POST https://docmentcogsearch.search.windows.net/indexes/document-index/docs/search?api-version=2020-06-30
+api-key: 79BA39228AEBC2BDF076A8F249764A8C
+Content-Type: application/json
+
+{
+    "search": "Las Vegas",
+    "queryType": "simple",
+    "searchMode": "all",
+    "searchFields": "content",
+    "filter": "search.ismatch('reviews', 'url')",
+    "count": "true"
+}
+
+#$filter=search.ismatchscoring('luxury | high-end', 'Description') or Category eq 'Luxury'&$count=true
+
+
+###
+
+
+
