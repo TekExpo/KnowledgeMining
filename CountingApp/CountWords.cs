@@ -74,16 +74,35 @@ namespace CountingApp
             }
 
             // Construct object for results
-            word_list json_result = new word_list();
-            json_result.words = resList;
+            Records record = new Records();
+            record.recordId =  "a1";
+            record.data = new wordList();
+            record.data.words = resList;
+
+
+            Values json_result = new Values();
+            json_result.values = new List<Records>();
+            json_result.values.Add(record);
 
             // return the results object
             return new OkObjectResult(json_result);
         }
     }
 
-    public class word_list
+    public class Values
     {
-        public List<string> words {get; set;}
+        public List<Records> values {get; set;}
     }
+
+
+    public class Records{
+        public string recordId {get; set;}
+        public wordList data {get; set;}
+    }
+
+    public class wordList {
+        public List<string> words {get;set;}
+    }
+
+
 }
